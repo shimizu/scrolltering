@@ -79,8 +79,8 @@ const builds = [
   }
 ];
 
-// 開発サーバー用ビルド（serve時のみ）
-if (isServe) {
+// 開発サーバー用ビルド（serve時のみ、本番ビルドには含めない）
+if (isServe && !isProduction) {
   builds.push({
     input: 'src/index.js',
     output: {

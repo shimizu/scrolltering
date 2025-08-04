@@ -9,10 +9,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c --environment NODE_ENV:production",
+    "clean": "rm -f dist/scrolltering.dev.js dist/scrolltering.dev.js.map",
+    "build": "npm run clean && rollup -c --environment NODE_ENV:production",
     "preview": "npm run build && rollup -c rollup.config.preview.js",
     "dev": "rollup -c --watch --environment NODE_ENV:development,SERVE:true",
-    "publish": "gh-pages -d dist",
+    "publish": "gh-pages -d dist"
   },
   "keywords": [
     "scroll",
