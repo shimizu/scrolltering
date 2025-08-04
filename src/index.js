@@ -6,8 +6,8 @@
  * @license MIT
  */
 
-// ScrollySystemクラスをインポート
-import { ScrollySystem } from './scrolltering.js';
+// Scrollteringクラスをインポート
+import { Scrolltering } from './scrolltering.js';
 
 // デフォルトエクスポートのみ
-export default ScrollySystem;
+export default Scrolltering;

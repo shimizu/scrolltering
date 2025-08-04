@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complex Scrollytelling Demo - ScrollySystem</title>
+    <title>Complex Scrollytelling Demo - Scrolltering</title>
     <style>
         * {
             margin: 0;
@@ -376,7 +376,7 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-badge">複雑なスクロールテリング体験</div>
-            <h1>ScrollySystem<br>Advanced Demo</h1>
+            <h1>Scrolltering<br>Advanced Demo</h1>
             <p>複数のスクロールテリングエリアを組み合わせた、<br>高度なインタラクション体験をお楽しみください</p>
         </div>
     </section>
@@ -384,7 +384,7 @@
     <!-- Article 1 -->
     <section class="article">
         <h2>複数インスタンスの活用</h2>
-        <p>ScrollySystemは単一ページ内で複数のインスタンスを同時に動作させることができます。これにより、異なるコンテンツエリアごとに独立したスクロールトリガリング体験を提供できます。各インスタンスは独自の設定を持ち、互いに干渉することなく並行して動作します。</p>
+        <p>Scrollteringは単一ページ内で複数のインスタンスを同時に動作させることができます。これにより、異なるコンテンツエリアごとに独立したスクロールトリガリング体験を提供できます。各インスタンスは独自の設定を持ち、互いに干渉することなく並行って動作します。</p>
         <p>以下の最初のスクロールテリングエリアでは、プロジェクト開発の3つのフェーズ（企画・設計・開発）を、背景色の変化とともに体験できます。各ステップでテキストコンテンツが表示され、視覚的に理解しやすい構成になっています。</p>
     </section>
 
@@ -425,7 +425,7 @@
     <!-- Article 2 -->
     <section class="article">
         <h2>実装時の考慮点</h2>
-        <p>ScrollySystemを実装する際は、パフォーマンス、アクセシビリティ、保守性、拡張性の4つの観点を考慮することが重要です。これらの要素をバランス良く取り入れることで、ユーザーにとって快適で、開発者にとって管理しやすいシステムを構築できます。</p>
+        <p>Scrollteringを実装する際は、パフォーマンス、アクセシビリティ、保守性、拡張性の4つの観点を考慮することが重要です。これらの要素をバランス良く取り入れることで、ユーザーにとって快適で、開発者にとって管理しやすいシステムを構築できます。</p>
         <p>次のスクロールテリングエリアでは、これら4つの最適化ポイントを詳しく解説します。各項目は実際の開発現場で直面する課題と解決策を含んでおり、実践的な知識として活用できます。</p>
     </section>
 
@@ -434,7 +434,7 @@
         <div class="sticky-background area-2" data-current="area2-step1">
             <div class="background-content">
                 <h3>最適化の4原則</h3>
-                <p>品質の高いScrollySystemを構築するために</p>
+                <p>品質の高いScrollteringを構築するために</p>
             </div>
         </div>
 
@@ -474,7 +474,7 @@
     <!-- Conclusion -->
     <section class="conclusion">
         <h2>今後の展望</h2>
-        <p>ScrollySystemは、モダンWebサイトにおけるスクロールインタラクションの可能性を大きく広げます。IntersectionObserverの力を活用し、パフォーマンスとユーザビリティを両立した、次世代のスクロールテリング体験を提供します。あなたのプロジェクトでも、ぜひこの革新的なアプローチを取り入れてみてください。</p>
+        <p>Scrollteringは、モダンWebサイトにおけるスクロールインタラクションの可能性を大きく広げます。IntersectionObserverの力を活用し、パフォーマンスとユーザビリティを両立した、次世代のスクロールテリング体験を提供します。あなたのプロジェクトでも、ぜひこの革新的なアプローチを取り入れてみてください。</p>
     </section>
 
     <!-- Debug Panel -->
@@ -503,8 +503,8 @@
 
     <script src="scrolltering.dev.js"></script>
     <script>
-        // ScrollySystem インスタンスの初期化
-        const scrollyArea1 = new ScrollySystem({
+        // Scrolltering インスタンスの初期化
+        const scrollyArea1 = new Scrolltering({
             selector: '[data-scrolly="area1"]',
             triggerAttribute: 'data-scrolly-trigger',
             threshold: 0.5,
@@ -516,7 +516,7 @@
             }
         });
 
-        const scrollyArea2 = new ScrollySystem({
+        const scrollyArea2 = new Scrolltering({
             selector: '[data-scrolly="area2"]',
             triggerAttribute: 'data-scrolly-trigger',
             threshold: 0.5,
@@ -553,7 +553,7 @@
 
         // 診断実行関数
         function runDiagnosis() {
-            console.group('🔍 ScrollySystem 複合診断');
+            console.group('🔍 Scrolltering 複合診断');
             
             const area1Result = scrollyArea1.diagnose(true);
             const area2Result = scrollyArea2.diagnose(true);

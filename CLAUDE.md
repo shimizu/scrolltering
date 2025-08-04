@@ -17,25 +17,24 @@ npm install                    # 依存関係のインストール
 
 ### 開発
 ```bash
-npm run serve                  # 開発サーバー起動（http://localhost:3000、ライブリロード付き）
-npm run dev                    # ファイル変更監視ビルド
+npm run dev                  # 開発サーバー起動（http://localhost:3000、ライブリロード付き）
 npm run build                  # 本番用ビルド
 npm run preview               # ビルド結果のプレビュー（http://localhost:3001）
 ```
 
 ## 主要ファイル
 
-- `src/scrolltering.js` - ScrollySystem クラスのコア実装
+- `src/scrolltering.js` - Scrolltering クラスのコア実装
 - `src/index.js` - モジュールエクスポートのエントリーポイント
 - `public/index.html` - ビジュアル例とデバッグパネル付きの基本インタラクティブデモ
-- `public/complexity.html` - 複数の ScrollySystem インスタンスを持つ高度なデモ
+- `public/complexity.html` - 複数の Scrolltering インスタンスを持つ高度なデモ
 - `README.md` - 日本語での包括的なドキュメント
 - `README.dev.md` - 開発環境セットアップガイド
 - `rollup.config.js` - Rollup ビルド設定
 
 ## コアアーキテクチャ
 
-### ScrollySystem クラス
+### Scrolltering クラス
 `scrolltering.js:5-171` にあるメインクラスは以下を提供します：
 - IntersectionObserver ベースのスクロール追跡
 - パフォーマンス向上のためのデバウンスイベント処理
@@ -84,7 +83,7 @@ npm run preview               # ビルド結果のプレビュー（http://local
 
 ### 基本的な使用法
 ```javascript
-const scrolly = new ScrollySystem();
+const scrolly = new Scrolltering();
 window.addEventListener('scrollTrigger', (event) => {
     console.log('Current section:', event.detail.current);
 });
@@ -92,7 +91,7 @@ window.addEventListener('scrollTrigger', (event) => {
 
 ### コールバックベースの使用法（推奨）
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     onChange: ({ current, previous }) => {
         console.log(`Changed from ${previous} to ${current}`);
     }

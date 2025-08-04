@@ -3,7 +3,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.ScrollySystem = factory());
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Scrolltering = factory());
 })(this, (function () { 'use strict';
 
     /**
@@ -13,20 +13,20 @@
      * 従来のスクロールイベントと異なり、IntersectionObserverは要素のビューポートとの交差を
      * 効率的に監視します。これにより、パフォーマンスの向上とバッテリー消費の削減を実現します。
      * 
-     * @class ScrollySystem
+     * @class Scrolltering
      * 
      * @example
      * // コールバック方式（推奨）
-     * const scrolly = new ScrollySystem({
+     * const scrolly = new Scrolltering({
      *   threshold: 0.5,
      *   onChange: ({ current, previous }) => {
      *     console.log(`${previous} から ${current} に変更`);
      *   }
      * });
      */
-    class ScrollySystem {
+    class Scrolltering {
         /**
-         * ScrollySystemのコンストラクタ
+         * Scrollteringのコンストラクタ
          * 
          * @param {Object} options - 設定オプション
          * @param {string} [options.selector='[data-trigger]'] - 監視対象要素のCSSセレクタ
@@ -650,7 +650,7 @@
                 'error': '❌'
             };
 
-            console.group(`${statusEmoji[result.status]} ScrollySystem 診断結果 (ID: ${this.instanceId.split('-').pop()})`);
+            console.group(`${statusEmoji[result.status]} Scrolltering 診断結果 (ID: ${this.instanceId.split('-').pop()})`);
             
             console.log('📊 概要:', result.summary);
             
@@ -685,7 +685,7 @@
      * @license MIT
      */
 
-    return ScrollySystem;
+    return Scrolltering;
 
 }));
 //# sourceMappingURL=scrolltering.dev.js.map

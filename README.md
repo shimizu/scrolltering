@@ -4,200 +4,19 @@
 
 IntersectionObserverを使用した、汎用的でシンプルなスクロールトリガリングシステムの実装方法です。特定の要素が画面内に入った時にイベントを発火させる最小限の機能を提供します。
 
-## ScrollySystemクラス（改善版）
-
-```javascript
-class ScrollySystem {
-    constructor(options = {}) {
-        // デフォルト設定
-        this.config = {
-            selector: '[data-trigger]',        // 監視対象のセレクタ
-            triggerAttribute: 'data-trigger',  // トリガーID属性名
-            threshold: 0,                      // 交差の閾値
-            rootMargin: '0px',                 // ルートマージン
-            debounceDelay: 10,                 // デバウンス遅延時間(ms)
-            onChange: null,                    // カスタムコールバック
-            ...options
-        };
-        
-        this.observer = null;
-        this.visibleElements = new Map();
-        this.currentTriggerId = null;
-        this.lastValidTriggerId = null;
-        this._debounceTimer = null;           // タイマー管理用
-        this.instanceId = `scrolly-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`; // ユニークなインスタンスID
-        
-        this.init();
-    }
-    
-    init() {
-        // デバウンス関数の準備
-        this.debouncedUpdate = this.debounce(
-            () => this.updateCurrentTrigger(), 
-            this.config.debounceDelay
-        );
-        
-        // DOMが準備できたら開始
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.setup());
-        } else {
-            this.setup();
-        }
-    }
-    
-    setup() {
-        this.setupObserver();
-        // 初期状態を即座に評価
-        this.updateCurrentTrigger();
-    }
-    
-    setupObserver() {
-        const options = {
-            threshold: this.config.threshold,
-            rootMargin: this.config.rootMargin
-        };
-        
-        this.observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const element = entry.target;
-                const triggerId = element.getAttribute(this.config.triggerAttribute);
-                
-                if (entry.isIntersecting) {
-                    this.visibleElements.set(element, triggerId);
-                } else {
-                    this.visibleElements.delete(element);
-                }
-            });
-            
-            this.debouncedUpdate();
-        }, options);
-        
-        // 監視対象の要素を登録
-        const targets = document.querySelectorAll(this.config.selector);
-        targets.forEach(target => this.observer.observe(target));
-    }
-    
-    updateCurrentTrigger() {
-        const entries = Array.from(this.visibleElements.entries());
-        
-        if (entries.length > 0) {
-            // 画面内で最も上にある要素を取得
-            const topEntry = entries.reduce((prev, curr) => {
-                const prevRect = prev[0].getBoundingClientRect();
-                const currRect = curr[0].getBoundingClientRect();
-                return currRect.top < prevRect.top ? curr : prev;
-            });
-            
-            const triggerId = topEntry[1];
-            this.lastValidTriggerId = triggerId;
-            this.setCurrentTrigger(triggerId);
-        } else {
-            // 画面内に要素がない場合
-            if (this.lastValidTriggerId !== null) {
-                // 最後の有効なトリガーを維持
-                this.setCurrentTrigger(this.lastValidTriggerId);
-            }
-        }
-    }
-    
-    setCurrentTrigger(triggerId) {
-        if (this.currentTriggerId !== triggerId) {
-            const previousTriggerId = this.currentTriggerId;
-            this.currentTriggerId = triggerId;
-            
-            // カスタムイベントを発火
-            this.emitTriggerChange(triggerId, previousTriggerId);
-        }
-    }
-    
-    emitTriggerChange(currentId, previousId) {
-        const detail = {
-            current: currentId,
-            previous: previousId,
-            timestamp: Date.now(),
-            instanceId: this.instanceId
-        };
-        
-        // カスタムコールバックがあれば実行
-        if (typeof this.config.onChange === 'function') {
-            this.config.onChange(detail);
-        }
-        
-        // イベントも発火（互換性のため）
-        const event = new CustomEvent('scrollTrigger', { detail });
-        window.dispatchEvent(event);
-    }
-    
-    // ユーティリティ: デバウンス関数
-    debounce(func, wait) {
-        return (...args) => {
-            clearTimeout(this._debounceTimer);
-            this._debounceTimer = setTimeout(() => func.apply(this, args), wait);
-        };
-    }
-    
-    // 現在のトリガーIDを取得
-    getCurrentTriggerId() {
-        return this.currentTriggerId;
-    }
-    
-    // 動的に要素を追加
-    observe(element) {
-        if (this.observer && element) {
-            this.observer.observe(element);
-        }
-    }
-    
-    // 動的に要素を削除
-    unobserve(element) {
-        if (this.observer && element) {
-            this.observer.unobserve(element);
-            this.visibleElements.delete(element);
-        }
-    }
-    
-    // システムを破棄
-    destroy() {
-        // タイマーをクリア
-        if (this._debounceTimer) {
-            clearTimeout(this._debounceTimer);
-        }
-        
-        // オブザーバーを破棄
-        if (this.observer) {
-            this.observer.disconnect();
-        }
-        
-        // 内部状態をクリア
-        this.visibleElements.clear();
-        this.currentTriggerId = null;
-        this.lastValidTriggerId = null;
-    }
-}
-```
-
 ## 使用方法
 
 ### 基本的な使い方
 
 ```javascript
 // インスタンスを作成
-const scrolly = new ScrollySystem();
-
-// イベントリスナーを設定
-window.addEventListener('scrollTrigger', (event) => {
-    const { current, previous } = event.detail;
-    console.log(`Trigger changed from ${previous} to ${current}`);
-    
-    // ここで任意の処理を実行
-    // 例: 地図の更新、アニメーション、コンテンツの切り替えなど
-});
+const scrolly = new Scrolltering();
 ```
 
-### コールバックベースの使用（推奨）
+### コールバックベースの使用
 
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     onChange: ({ current, previous }) => {
         console.log(`現在: ${current}, 前回: ${previous}`);
         // ここで任意の処理を実行
@@ -208,7 +27,7 @@ const scrolly = new ScrollySystem({
 ### カスタム設定での使用
 
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     selector: '.scroll-item',           // クラスセレクタを使用
     triggerAttribute: 'data-section',   // カスタム属性名
     threshold: 0.5,                     // 要素の50%が見えたら発火
@@ -228,7 +47,7 @@ const scrolly = new ScrollySystem({
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>スクロールトリガリング</title>
+    <title>スクロールテリング デモ</title>
     <style>
         .scroll-section {
             min-height: 100vh;
@@ -264,7 +83,7 @@ const scrolly = new ScrollySystem({
     <script src="scrolly-system.js"></script>
     <script>
         // システムを初期化
-        const scrolly = new ScrollySystem();
+        const scrolly = new Scrolltering();
         
         // イベントハンドラー
         window.addEventListener('scrollTrigger', (event) => {
@@ -294,7 +113,7 @@ const scrolly = new ScrollySystem({
 
 ## HTML構築時の注意点
 
-ScrollySystemを正しく動作させるためのHTML構築時の重要なポイントです。
+Scrollteringを正しく動作させるためのHTML構築時の重要なポイントです。
 
 ### 要素の高さ設定
 
@@ -312,7 +131,7 @@ ScrollySystemを正しく動作させるためのHTML構築時の重要なポイ
 
 ### スクロールコンテナの設定
 
-以下のCSS設定はScrollySystemの動作を阻害します：
+以下のCSS設定はScrollteringの動作を阻害します：
 
 ```css
 /* ❌ 避けるべき設定 */
@@ -337,7 +156,7 @@ body, html {
 ### カスタムスクロールコンテナを使用する場合
 
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     // rootオプションでスクロール対象コンテナを指定
     root: document.getElementById('scroll-container')
 });
@@ -400,7 +219,7 @@ setTimeout(() => {
 
 ```javascript
 // メインコンテンツ用
-const mainScrolly = new ScrollySystem({
+const mainScrolly = new Scrolltering({
     selector: '[data-main-trigger]',
     triggerAttribute: 'data-main-trigger',
     onChange: (detail) => {
@@ -409,7 +228,7 @@ const mainScrolly = new ScrollySystem({
 });
 
 // サイドバー用
-const sidebarScrolly = new ScrollySystem({
+const sidebarScrolly = new Scrolltering({
     selector: '[data-sidebar-trigger]',
     triggerAttribute: 'data-sidebar-trigger',
     onChange: (detail) => {
@@ -432,7 +251,7 @@ window.addEventListener('scrollTrigger', (event) => {
 ### 動的な要素の追加/削除
 
 ```javascript
-const scrolly = new ScrollySystem();
+const scrolly = new Scrolltering();
 
 // 新しい要素を追加
 const newElement = document.createElement('div');
@@ -448,7 +267,7 @@ newElement.remove();
 ### プログレスバーの実装例
 
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     threshold: [0, 0.25, 0.5, 0.75, 1] // 複数の閾値
 });
 
@@ -464,7 +283,7 @@ window.addEventListener('scrollTrigger', (event) => {
 
 ## トラブルシューティング
 
-ScrollySystemが期待通りに動作しない場合の診断と解決方法です。
+Scrollteringが期待通りに動作しない場合の診断と解決方法です。
 
 ### スクロールイベントが発火しない主なケース
 
@@ -498,7 +317,7 @@ console.log('clientHeight:', document.documentElement.clientHeight);
 **原因**: threshold値が大きすぎる（例：1.0）
 **解決方法**:
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     threshold: 0.1, // 10%表示されたら発火（推奨）
     // threshold: 1.0 // ❌ 100%表示まで待つ（非推奨）
 });
@@ -550,7 +369,7 @@ setTimeout(() => {
 
 ```javascript
 // システムの初期化確認
-console.log('ScrollySystem ID:', scrolly.instanceId);
+console.log('Scrolltering ID:', scrolly.instanceId);
 console.log('Current trigger:', scrolly.getCurrentTriggerId());
 
 // 監視対象要素の確認
@@ -599,7 +418,7 @@ A: iframe内では親ウィンドウのスクロールを監視できません�
 **Q: 高速スクロール時にイベントが発火しない**
 A: debounceDelay を短くしてください：
 ```javascript
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     debounceDelay: 5 // デフォルト10msを短縮
 });
 ```
@@ -617,19 +436,19 @@ const scrolly = new ScrollySystem({
 
 ## パフォーマンス最適化
 
-ScrollySystemの性能を最大化するための詳細なガイドです。
+Scrollteringの性能を最大化するための詳細なガイドです。
 
 ### 基本的な最適化
 
 #### 1. 適切なthreshold設定
 ```javascript
 // ❌ 計算負荷が高い設定
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 });
 
 // ✅ 必要最小限の設定
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     threshold: 0.3 // 単一の値を推奨
 });
 ```
@@ -637,7 +456,7 @@ const scrolly = new ScrollySystem({
 #### 2. デバウンス遅延の最適化
 ```javascript
 // 用途に応じた設定
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     debounceDelay: 10,  // 高頻度更新が必要な場合
     debounceDelay: 50,  // 一般的な用途（推奨）
     debounceDelay: 100  // 低頻度で十分な場合
@@ -698,12 +517,12 @@ useEffect(() => {
 #### 2. インスタンス数の管理
 ```javascript
 // ❌ 不要な複数インスタンス
-const scrolly1 = new ScrollySystem({ selector: '.section1' });
-const scrolly2 = new ScrollySystem({ selector: '.section2' });
-const scrolly3 = new ScrollySystem({ selector: '.section3' });
+const scrolly1 = new Scrolltering({ selector: '.section1' });
+const scrolly2 = new Scrolltering({ selector: '.section2' });
+const scrolly3 = new Scrolltering({ selector: '.section3' });
 
 // ✅ 単一インスタンスでの管理
-const scrolly = new ScrollySystem({
+const scrolly = new Scrolltering({
     selector: '.section1, .section2, .section3'
 });
 ```
@@ -828,4 +647,4 @@ IE11で使用する場合は、IntersectionObserverのポリフィルが必要�
 
 ## まとめ
 
-このScrollySystemクラスは、スクロールトリガリングの基本的な機能を提供する汎用的なソリューションです。改善されたメモリ管理、柔軟なコールバック対応、初期状態の適切な処理により、より堅牢で使いやすいシステムになっています。イベント発火後の処理は完全にカスタマイズ可能で、様々なプロジェクトに簡単に統合できます。
+このScrollteringクラスは、スクロールトリガリングの基本的な機能を提供する汎用的なソリューションです。改善されたメモリ管理、柔軟なコールバック対応、初期状態の適切な処理により、より堅牢で使いやすいシステムになっています。イベント発火後の処理は完全にカスタマイズ可能で、様々なプロジェクトに簡単に統合できます。

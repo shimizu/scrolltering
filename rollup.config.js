@@ -69,7 +69,7 @@ const builds = [
     output: {
       file: 'dist/scrolltering.umd.js',
       format: 'umd',
-      name: 'ScrollySystem',
+      name: 'Scrolltering',
       sourcemap: !isProduction,
       exports: 'default'
     },
@@ -86,7 +86,7 @@ if (isServe) {
     output: {
       file: 'dist/scrolltering.dev.js',
       format: 'umd',
-      name: 'ScrollySystem',
+      name: 'Scrolltering',
       sourcemap: true,
       exports: 'default'
     },
