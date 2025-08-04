@@ -9,10 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "dev": "rollup -c --watch --environment NODE_ENV:development",
     "build": "rollup -c --environment NODE_ENV:production",
     "preview": "npm run build && rollup -c rollup.config.preview.js",
-    "serve": "rollup -c --watch --environment NODE_ENV:development,SERVE:true"
+    "dev": "rollup -c --watch --environment NODE_ENV:development,SERVE:true"
   },
   "keywords": [
     "scroll",

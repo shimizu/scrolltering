@@ -11,26 +11,25 @@ const plugins = [
   resolve(),
 ];
 
-// 開発時のプラグイン
-if (!isProduction) {
-  plugins.push(
-    copy({
-      targets: [
-        { src: 'public/*', dest: 'dist' }
-      ]
-    })
-  );
+// publicファイルのコピー（開発・本番両方）
+plugins.push(
+  copy({
+    targets: [
+      { src: 'public/*', dest: 'dist' }
+    ]
+  })
+);
 
-  if (isServe) {
-    plugins.push(
-      serve({
-        open: true,
-        contentBase: 'dist',
-        port: 3000
-      }),
-      livereload('dist')
-    );
-  }
+// 開発時のプラグイン
+if (!isProduction && isServe) {
+  plugins.push(
+    serve({
+      open: true,
+      contentBase: 'dist',
+      port: 3000
+    }),
+    livereload('dist')
+  );
 }
 
 // 本番時の圧縮
@@ -38,29 +37,61 @@ if (isProduction) {
   plugins.push(terser());
 }
 
-export default [
-  // UMD build for browsers
+// 基本プラグイン（serve/livereload除外）
+const basePlugins = plugins.filter(p => 
+  p.name !== 'serve' && p.name !== 'livereload'
+);
+
+const builds = [
+  // CommonJS build
   {
     input: 'src/index.js',
     output: {
-      file: 'dist/scrolltering.js',
-      format: 'umd',
-      name: 'ScrollySystem',
+      file: 'dist/scrolltering.cjs.js',
+      format: 'cjs',
       sourcemap: !isProduction
     },
-    plugins
+    plugins: basePlugins
   },
   // ES module build
   {
     input: 'src/index.js',
     output: {
-      file: 'dist/scrolltering.es.js',
+      file: 'dist/scrolltering.esm.js',
       format: 'es',
       sourcemap: !isProduction
     },
-    plugins: plugins.filter(p => 
-      // serveとlivereloadはES module buildでは除外
-      p.name !== 'serve' && p.name !== 'livereload'
-    )
+    plugins: basePlugins
+  },
+  // UMD build for browsers
+  {
+    input: 'src/index.js',
+    output: {
+      file: 'dist/scrolltering.umd.js',
+      format: 'umd',
+      name: 'ScrollySystem',
+      sourcemap: !isProduction,
+      exports: 'default'
+    },
+    plugins: isProduction ? 
+      [resolve(), copy({ targets: [{ src: 'public/*', dest: 'dist' }] }), terser()] :
+      basePlugins
   }
 ];
+
+// 開発サーバー用ビルド（serve時のみ）
+if (isServe) {
+  builds.push({
+    input: 'src/index.js',
+    output: {
+      file: 'dist/scrolltering.dev.js',
+      format: 'umd',
+      name: 'ScrollySystem',
+      sourcemap: true,
+      exports: 'default'
+    },
+    plugins: plugins // serve/livereload含む
+  });
+}
+
+export default builds;

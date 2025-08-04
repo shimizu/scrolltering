@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Simple Scrolly Triggering System
  * IntersectionObserverを使用したシンプルなスクロールトリガリングシステム
@@ -669,5 +671,13 @@ class ScrollySystem {
     }
 }
 
-export { ScrollySystem, ScrollySystem as default };
-//# sourceMappingURL=scrolltering.es.js.map
+/**
+ * Simple Scrolly Triggering System
+ * 
+ * @version 1.0.0
+ * @author Your Name
+ * @license MIT
+ */
+
+module.exports = ScrollySystem;
+//# sourceMappingURL=scrolltering.cjs.js.map

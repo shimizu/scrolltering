@@ -1,10 +1,8 @@
-
-(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ScrollySystem = {}));
-})(this, (function (exports) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.ScrollySystem = factory());
+})(this, (function () { 'use strict';
 
     /**
      * Simple Scrolly Triggering System
@@ -677,10 +675,15 @@
         }
     }
 
-    exports.ScrollySystem = ScrollySystem;
-    exports.default = ScrollySystem;
+    /**
+     * Simple Scrolly Triggering System
+     * 
+     * @version 1.0.0
+     * @author Your Name
+     * @license MIT
+     */
 
-    Object.defineProperty(exports, '__esModule', { value: true });
+    return ScrollySystem;
 
 }));
-//# sourceMappingURL=scrolltering.js.map
+//# sourceMappingURL=scrolltering.umd.js.map
