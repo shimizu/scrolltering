@@ -11,7 +11,8 @@
   "scripts": {
     "build": "rollup -c --environment NODE_ENV:production",
     "preview": "npm run build && rollup -c rollup.config.preview.js",
-    "dev": "rollup -c --watch --environment NODE_ENV:development,SERVE:true"
+    "dev": "rollup -c --watch --environment NODE_ENV:development,SERVE:true",
+    "publish": "gh-pages -d dist",
   },
   "keywords": [
     "scroll",
@@ -26,8 +27,11 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "rollup": "^4.9.0",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^1.1.1",
-    "rollup-plugin-copy": "^3.5.0"
+    "rollup-plugin-serve": "^1.1.1"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
